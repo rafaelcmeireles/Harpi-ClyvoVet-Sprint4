@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClyvoVetApi.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:ClyvoVetApi.Models.ChatMessage">
+            <summary>
+            Mensagem do chat interno entre tutor e veterinário, vinculada a uma consulta.
+            Persistida em MongoDB (NoSQL), pois é um dado append-only, de alto volume e sem joins.
+            </summary>
+        </member>
+        <member name="P:ClyvoVetApi.Models.ChatMessage.Id">
+            <summary>ObjectId (string) gerado pelo MongoDB.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Models.Consultation">
+            <summary>
+            Representa uma consulta veterinária, vinculando um Pet, seu Tutor e o Veterinário responsável.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Models.Pet">
+            <summary>
+            Representa um animal de estimação vinculado a um Tutor.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Models.User">
+            <summary>
+            Representa um usuário do sistema — pode ser um Tutor (dono do pet) ou um Veterinário.
+            </summary>
+        </member>
+        <member name="P:ClyvoVetApi.Models.User.PasswordHash">
+            <summary>Hash PBKDF2 da senha. Nunca é serializado nas respostas da API.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Domain.ConsultationSchedulingRules">
+            <summary>
+            Regras de agendamento de consultas: não permitir datas passadas e detectar
+            conflito de horário na agenda de um mesmo veterinário.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Domain.ConsultationSchedulingRules.HasConflict(System.DateTime,System.DateTime,System.TimeSpan)">
+            <summary>
+            Duas consultas do mesmo veterinário conflitam se a diferença entre os horários
+            for menor que a janela mínima exigida entre atendimentos.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Domain.ConsultationStatuses">
+            <summary>
+            Status possíveis de uma consulta veterinária e as transições permitidas entre eles.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Domain.ConsultationStatuses.CanTransition(System.String,System.String)">
+            <summary>
+            Uma consulta em estado final (Realizada ou Cancelada) não pode mais ser alterada.
+            A partir de "Agendada", qualquer status válido pode ser assumido.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Domain.PetValidationRules">
+            <summary>
+            Regras de validação de dados de um Pet.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Domain.PetValidationRules.IsBirthDateValid(System.Nullable{System.DateTime},System.DateTime)">
+            <summary>
+            A data de nascimento, se informada, não pode estar no futuro em relação à data de referência.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Domain.PetValidationRules.IsWeightValid(System.Nullable{System.Double})">
+            <summary>
+            O peso, se informado, precisa ser maior que zero.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Domain.UserRoles">
+            <summary>
+            Papéis de usuário aceitos pela aplicação. Centraliza a regra de negócio que antes
+            estava duplicada (e escrita como string solta) em cada Controller.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Domain.UserValidationRules">
+            <summary>
+            Regras de validação específicas de Usuário. Ex.: veterinários precisam de CRMV.
+            </summary>
+        </member>
+    </members>
+</doc>

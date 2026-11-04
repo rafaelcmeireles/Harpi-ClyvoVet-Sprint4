@@ -1,0 +1,81 @@
+version: "3.8"
+
+# =============================================
+# Docker Compose - ClyvoVet API + Oracle XE + MongoDB
+# =============================================
+# Uso (na raiz da solucao):  docker compose up -d --build
+# Swagger: http://localhost:8080
+
+services:
+
+  # ---------- Banco relacional: Oracle XE ----------
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: clyvovet-oracle
+    environment:
+      ORACLE_PASSWORD: clyvovet123
+      APP_USER: clyvovet
+      APP_USER_PASSWORD: clyvovet123
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - clyvovet-network
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  # ---------- Banco NoSQL: MongoDB (chat das consultas) ----------
+  mongo-db:
+    image: mongo:7
+    container_name: clyvovet-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - clyvovet-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  # ---------- API ClyvoVet (.NET 8) ----------
+  api:
+    build:
+      context: .
+      dockerfile: ClyvoVetApi/Dockerfile
+    container_name: clyvovet-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__OracleConnection=User Id=clyvovet;Password=clyvovet123;Data Source=oracle-db:1521/XEPDB1;
+      - Mongo__ConnectionString=mongodb://mongo-db:27017
+      - Mongo__Database=clyvovet
+      # TROQUE esta chave (minimo 32 caracteres) fora de ambiente de estudo
+      - Jwt__Key=chave-jwt-docker-compose-troque-em-producao-0123456789
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+      mongo-db:
+        condition: service_healthy
+    networks:
+      - clyvovet-network
+    restart: unless-stopped
+
+volumes:
+  oracle-data:
+    name: clyvovet-oracle-data
+  mongo-data:
+    name: clyvovet-mongo-data
+
+networks:
+  clyvovet-network:
+    name: clyvovet-network
+    driver: bridge

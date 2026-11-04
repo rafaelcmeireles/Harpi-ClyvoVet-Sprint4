@@ -1,0 +1,13 @@
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/out
+**/.idea
+**/Logs/
+*.md
+*.http
+ClyvoVetApi.Tests.Unit
+ClyvoVetApi.Tests.Integration

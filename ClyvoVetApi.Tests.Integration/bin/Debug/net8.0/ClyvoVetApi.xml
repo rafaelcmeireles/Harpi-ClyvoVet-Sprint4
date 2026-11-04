@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClyvoVetApi</name>
+    </assembly>
+    <members>
+        <member name="T:ClyvoVetApi.Controllers.ApiControllerBase">
+            <summary>
+            Base dos controllers: concentra a montagem de respostas HATEOAS e paginadas
+            para que os controllers concretos permaneçam finos.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ApiControllerBase.Abs(System.String)">
+            <summary>Converte um caminho relativo em URL absoluta da requisição atual.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ApiControllerBase.ToPaged``1(ClyvoVetApi.Application.Common.PagedResult{``0},ClyvoVetApi.Application.Common.PageQuery,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Func{``0,System.Collections.Generic.IEnumerable{ClyvoVetApi.DTOs.Link}})">
+            <summary>
+            Monta a resposta paginada: cada item recebe seus links e a coleção recebe
+            os links de navegação (self, first, prev, next, last).
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Controllers.AuthController">
+            <summary>Autenticação: emite o token JWT usado nos demais endpoints.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.AuthController.Login(ClyvoVetApi.DTOs.LoginDto,System.Threading.CancellationToken)">
+            <summary>
+            Autentica com e-mail e senha e retorna um token JWT (use no header
+            <c>Authorization: Bearer {token}</c>).
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Controllers.ConsultationMessagesController">
+            <summary>
+            Chat interno de uma consulta (tutor ↔ veterinário). As mensagens são
+            armazenadas em MongoDB; o restante do domínio fica no banco relacional.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationMessagesController.GetMessages(System.Int32,ClyvoVetApi.Application.Common.PageQuery,System.Threading.CancellationToken)">
+            <summary>
+            Lista as mensagens da consulta em ordem cronológica, com paginação.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationMessagesController.Send(System.Int32,ClyvoVetApi.DTOs.SendMessageDto,System.Threading.CancellationToken)">
+            <summary>
+            Envia uma mensagem. O remetente é o usuário autenticado (claim <c>sub</c> do JWT) e
+            precisa ser o veterinário da consulta ou o tutor do pet.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Controllers.ConsultationsController">
+            <summary>
+            Controller responsável pelo CRUD de Consultas Veterinárias. Toda a regra de negócio
+            (validação de agenda, conflitos de horário, transições de status) vive em
+            <see cref="T:ClyvoVetApi.Application.Services.IConsultationService"/>.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetAll(ClyvoVetApi.Application.Common.PageQuery,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Lista consultas com paginação, ordenação e filtros.
+            Ordenação (<c>sortBy</c>): id, consultationDate, status, createdAt.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetById(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna uma consulta pelo seu ID, com links HATEOAS.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetByPet(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todas as consultas de um pet específico.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetByVet(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todas as consultas de um veterinário específico.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetByStatus(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todas as consultas filtradas pelo status (Agendada, Realizada, Cancelada).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.GetByPeriod(System.DateTime,System.DateTime,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todas as consultas dentro de um intervalo de datas.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.Create(ClyvoVetApi.DTOs.CreateConsultationDto,System.Threading.CancellationToken)">
+            <summary>
+            Agenda uma nova consulta veterinária.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.Update(System.Int32,ClyvoVetApi.DTOs.UpdateConsultationDto,System.Threading.CancellationToken)">
+            <summary>
+            Atualiza os dados de uma consulta existente (incluindo mudança de status).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.ConsultationsController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Remove uma consulta pelo ID.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Controllers.PetsController">
+            <summary>
+            Controller responsável pelo CRUD de Pets. Toda a regra de negócio vive em
+            <see cref="T:ClyvoVetApi.Application.Services.IPetService"/>.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.GetAll(ClyvoVetApi.Application.Common.PageQuery,System.Nullable{System.Int32},System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Lista pets com paginação, ordenação e filtros.
+            Ordenação (<c>sortBy</c>): id, name, species, breed, weightKg.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.GetById(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna um pet pelo seu ID, com links HATEOAS.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.GetByTutor(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todos os pets de um Tutor específico.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.GetBySpecies(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todos os pets filtrados por espécie (ex: Cachorro, Gato).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.GetByBreed(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todos os pets filtrados por raça.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.SearchByName(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Busca pets pelo nome (pesquisa parcial).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.Create(ClyvoVetApi.DTOs.CreatePetDto,System.Threading.CancellationToken)">
+            <summary>
+            Cadastra um novo pet vinculado a um Tutor.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.Update(System.Int32,ClyvoVetApi.DTOs.UpdatePetDto,System.Threading.CancellationToken)">
+            <summary>
+            Atualiza os dados de um pet existente.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.PetsController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Remove um pet pelo ID.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Controllers.UsersController">
+            <summary>
+            Controller responsável pelo CRUD de Usuários (Tutores e Veterinários).
+            Toda a regra de negócio vive em <see cref="T:ClyvoVetApi.Application.Services.IUserService"/>; o Controller apenas
+            traduz HTTP em chamadas de caso de uso.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.GetAll(ClyvoVetApi.Application.Common.PageQuery,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Lista usuários com paginação, ordenação e filtros.
+            Ordenação (<c>sortBy</c>): id, name, email, role, createdAt.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.GetById(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Retorna um usuário pelo seu ID, com links HATEOAS.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.GetByRole(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todos os usuários filtrados pelo papel (Role): 'Tutor' ou 'Veterinario'.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.SearchByName(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna todos os usuários cujo nome contenha o termo informado.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.GetByEmail(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retorna um usuário pelo e-mail.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.Create(ClyvoVetApi.DTOs.CreateUserDto,System.Threading.CancellationToken)">
+            <summary>
+            Cria um novo usuário (Tutor ou Veterinário).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.Update(System.Int32,ClyvoVetApi.DTOs.UpdateUserDto,System.Threading.CancellationToken)">
+            <summary>
+            Atualiza os dados de um usuário existente.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Controllers.UsersController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Remove um usuário pelo ID.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.HealthChecks.ExternalServiceOptions">
+            <summary>
+            Opções de configuração do <see cref="T:ClyvoVetApi.Infrastructure.HealthChecks.ExternalServiceHealthCheck"/>, lidas da seção
+            "HealthChecks:ExternalService" do appsettings. Se a URL não for configurada, o check
+            é ignorado (retorna Healthy) — útil em ambientes onde o serviço externo ainda não existe.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.HealthChecks.ExternalServiceHealthCheck">
+            <summary>
+            Verifica a disponibilidade de um serviço externo do qual a API dependa (ex.: serviço
+            de notificações, gateway de pagamento, provedor de CEP, etc.), usado pelo endpoint
+            de readiness (<c>/health/ready</c>) exigido na Sprint 3.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.HealthChecks.MongoDbHealthCheck">
+            <summary>Verifica se o MongoDB responde ao comando <c>ping</c>.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Middleware.CorrelationIdMiddleware">
+            <summary>
+            Garante que toda requisição tenha um Correlation Id: reaproveita o enviado pelo
+            cliente no header "X-Correlation-Id" ou gera um novo, devolve-o no header de resposta
+            e o injeta no contexto de log estruturado (Serilog) e no trace atual (OpenTelemetry),
+            permitindo seguir uma requisição do início ao fim em todas as camadas.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Middleware.ExceptionHandlingMiddleware">
+            <summary>
+            Middleware global de tratamento de exceções: converte exceções de negócio em
+            respostas HTTP padronizadas (404 / 400) e qualquer outra exceção não prevista em 500,
+            sempre registrando o erro com o Correlation Id da requisição.
+            </summary>
+        </member>
+    </members>
+</doc>

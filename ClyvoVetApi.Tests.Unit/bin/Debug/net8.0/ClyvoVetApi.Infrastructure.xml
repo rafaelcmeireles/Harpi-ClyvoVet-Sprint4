@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClyvoVetApi.Infrastructure</name>
+    </assembly>
+    <members>
+        <member name="T:ClyvoVetApi.Data.AppDbContext">
+            <summary>
+            Contexto do Entity Framework Core para acesso ao banco de dados Oracle.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Migrations.AddUserPasswordHash">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Infrastructure.Migrations.AddUserPasswordHash.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Infrastructure.Migrations.AddUserPasswordHash.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClyvoVetApi.Infrastructure.Migrations.AddUserPasswordHash.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Mongo.MongoSettings">
+            <summary>Configuração do MongoDB (seção <c>Mongo</c> do appsettings).</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Mongo.MongoChatMessageRepository">
+            <summary>
+            Implementação concreta do padrão Repository sobre MongoDB para as mensagens do chat.
+            O mapeamento BSON é feito aqui (e não nas classes de Domínio) para manter o Domínio
+            livre de dependências de infraestrutura.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Mongo.InMemoryChatMessageRepository">
+            <summary>
+            Implementação em memória usada no ambiente de testes (sem necessidade de um servidor MongoDB).
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Infrastructure.Repositories.EfConsultationRepository.HasScheduleConflictAsync(System.Int32,System.DateTime,System.TimeSpan,System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Busca no banco um superconjunto de candidatos dentro de uma janela ampla (tradutível para SQL)
+            e aplica a regra exata de conflito (<see cref="M:ClyvoVetApi.Domain.ConsultationSchedulingRules.HasConflict(System.DateTime,System.DateTime,System.TimeSpan)"/>) em
+            memória — mantendo a regra de negócio na camada de Domínio, testável isoladamente.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Repositories.QueryPaging">
+            <summary>Helpers de paginação/ordenação reutilizados pelos repositórios EF.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Security.JwtOptions">
+            <summary>Configuração do JWT (seção <c>Jwt</c> do appsettings).</summary>
+        </member>
+        <member name="P:ClyvoVetApi.Infrastructure.Security.JwtOptions.Key">
+            <summary>Chave simétrica (mínimo 32 caracteres). Em produção, defina via variável de ambiente.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Security.JwtTokenService">
+            <summary>Emite tokens JWT (HS256) com as claims do usuário.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Infrastructure.Security.Pbkdf2PasswordHasher">
+            <summary>
+            Hash de senha com PBKDF2 (HMAC-SHA256, salt aleatório de 16 bytes, 100.000 iterações).
+            Formato armazenado: <c>v1.{iterações}.{saltBase64}.{hashBase64}</c>.
+            </summary>
+        </member>
+    </members>
+</doc>

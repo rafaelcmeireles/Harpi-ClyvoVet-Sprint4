@@ -1,0 +1,36 @@
+@ClyvoVetApi_HostAddress = http://localhost:5129
+
+### Health checks
+GET {{ClyvoVetApi_HostAddress}}/health
+Accept: application/json
+
+###
+GET {{ClyvoVetApi_HostAddress}}/health/live
+Accept: application/json
+
+###
+GET {{ClyvoVetApi_HostAddress}}/health/ready
+Accept: application/json
+
+### Usuários
+GET {{ClyvoVetApi_HostAddress}}/api/users
+Accept: application/json
+
+###
+POST {{ClyvoVetApi_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria.silva@example.com",
+  "role": "Tutor",
+  "phone": "(11) 99999-0000"
+}
+
+### Pets
+GET {{ClyvoVetApi_HostAddress}}/api/pets
+Accept: application/json
+
+### Consultas
+GET {{ClyvoVetApi_HostAddress}}/api/consultations
+Accept: application/json

@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ClyvoVetApi.Application</name>
+    </assembly>
+    <members>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IConsultationRepository">
+            <summary>
+            Porta de acesso a dados de Consulta.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Abstractions.IConsultationRepository.HasScheduleConflictAsync(System.Int32,System.DateTime,System.TimeSpan,System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Verifica se o veterinário já possui uma consulta marcada dentro da janela mínima
+            (<paramref name="minimumGap"/>) em torno de <paramref name="date"/>.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IDateTimeProvider">
+            <summary>
+            Abstração sobre o relógio do sistema. Permite que os testes unitários fixem
+            a data/hora "atual" ao mockar esta interface, tornando os testes determinísticos.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IPetRepository">
+            <summary>
+            Porta de acesso a dados de Pet.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IUserRepository">
+            <summary>
+            Porta de acesso a dados de Usuário. Abstrai o EF Core para que a camada de
+            Aplicação possa ser testada com Moq, sem depender de um banco de dados real.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IPasswordHasher">
+            <summary>Hash e verificação de senhas (implementação na camada de Infraestrutura).</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.ITokenService">
+            <summary>Emissão de tokens de acesso (JWT).</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Abstractions.IChatMessageRepository">
+            <summary>Repositório NoSQL (MongoDB) das mensagens do chat.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.PageQuery">
+            <summary>
+            Parâmetros de paginação e ordenação aceitos pelos endpoints de consulta
+            (<c>?page=1&amp;pageSize=10&amp;sortBy=name&amp;desc=false</c>).
+            </summary>
+        </member>
+        <member name="P:ClyvoVetApi.Application.Common.PageQuery.Page">
+            <summary>Número da página (começa em 1).</summary>
+        </member>
+        <member name="P:ClyvoVetApi.Application.Common.PageQuery.PageSize">
+            <summary>Quantidade de itens por página (1 a 100).</summary>
+        </member>
+        <member name="P:ClyvoVetApi.Application.Common.PageQuery.SortBy">
+            <summary>Campo de ordenação (varia por recurso). Padrão: id.</summary>
+        </member>
+        <member name="P:ClyvoVetApi.Application.Common.PageQuery.Desc">
+            <summary>Quando verdadeiro, ordena de forma decrescente.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.PagedResult`1">
+            <summary>Resultado paginado devolvido pelos repositórios.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Common.PagedResult`1.#ctor(System.Collections.Generic.IReadOnlyList{`0},System.Int32)">
+            <summary>Resultado paginado devolvido pelos repositórios.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.UserFilter">
+            <summary>Filtros opcionais da listagem de usuários.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Common.UserFilter.#ctor(System.String,System.String)">
+            <summary>Filtros opcionais da listagem de usuários.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.PetFilter">
+            <summary>Filtros opcionais da listagem de pets.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Common.PetFilter.#ctor(System.Nullable{System.Int32},System.String,System.String,System.String)">
+            <summary>Filtros opcionais da listagem de pets.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.ConsultationFilter">
+            <summary>Filtros opcionais da listagem de consultas.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Common.ConsultationFilter.#ctor(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>Filtros opcionais da listagem de consultas.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Common.SortValidator">
+            <summary>Valida o campo de ordenação informado contra a lista de campos permitidos do recurso.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Exceptions.NotFoundException">
+            <summary>
+            Lançada quando uma entidade solicitada não é encontrada. Convertida pelo
+            middleware global de exceções em HTTP 404.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Exceptions.BusinessRuleException">
+            <summary>
+            Lançada quando uma regra de negócio é violada. Convertida pelo middleware
+            global de exceções em HTTP 400.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Exceptions.UnauthorizedAppException">
+            <summary>
+            Lançada quando as credenciais são inválidas ou o usuário não tem permissão para a
+            operação. Convertida pelo middleware global em HTTP 401/403.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Observability.ClyvoTelemetry">
+            <summary>
+            Ponto central de instrumentação customizada da aplicação. Expõe:
+            - um <see cref="F:ClyvoVetApi.Application.Observability.ClyvoTelemetry.ActivitySource"/> usado para criar spans na camada de Aplicação
+              (permitindo rastrear uma requisição enquanto ela atravessa Controller → Application → Infrastructure),
+            - um <see cref="F:ClyvoVetApi.Application.Observability.ClyvoTelemetry.Meter"/> com métricas de negócio (violações de regra, duração das operações),
+              complementares às métricas automáticas de ASP.NET Core.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Observability.ClyvoTelemetry.StartOperation(System.String)">
+            <summary>
+            Inicia um span + cronômetro para uma operação da camada de Aplicação.
+            Use dentro de um bloco <c>using</c> no início do método do serviço.
+            </summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Observability.ClyvoTelemetry.OperationScope.MarkAsBusinessRuleViolation(System.String)">
+            <summary>
+            Marca a operação atual como uma violação de regra de negócio, incrementando
+            o contador correspondente e anotando o span com o motivo.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Services.IAuthService">
+            <summary>Caso de uso de autenticação: valida credenciais e emite o token JWT.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Services.IChatService">
+            <summary>Casos de uso do chat interno de uma consulta (persistido em MongoDB).</summary>
+        </member>
+        <member name="M:ClyvoVetApi.Application.Services.ChatService.EnsureParticipantAsync(ClyvoVetApi.Models.Consultation,ClyvoVetApi.Models.User,System.Threading.CancellationToken)">
+            <summary>Somente o veterinário da consulta ou o tutor do pet podem conversar nela.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Services.IConsultationService">
+            <summary>
+            Casos de uso relacionados a Consultas veterinárias.
+            </summary>
+        </member>
+        <member name="F:ClyvoVetApi.Application.Services.ConsultationService.MinimumGapBetweenConsultations">
+            <summary>
+            Janela mínima entre duas consultas de um mesmo veterinário. Exposta como público
+            estático para ser reutilizada (e verificada) pelos testes unitários.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Services.IPetService">
+            <summary>
+            Casos de uso relacionados a Pets.
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.Application.Services.IUserService">
+            <summary>
+            Casos de uso relacionados a Usuários (Tutores e Veterinários).
+            </summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.CreateUserDto">
+            <summary>DTO para criação de um novo usuário.</summary>
+        </member>
+        <member name="P:ClyvoVetApi.DTOs.CreateUserDto.Password">
+            <summary>Senha de acesso (opcional no cadastro; necessária para fazer login).</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.UpdateUserDto">
+            <summary>DTO para atualização de um usuário existente.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.CreatePetDto">
+            <summary>DTO para criação de um novo pet.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.UpdatePetDto">
+            <summary>DTO para atualização de um pet existente.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.CreateConsultationDto">
+            <summary>DTO para criação de uma nova consulta.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.UpdateConsultationDto">
+            <summary>DTO para atualização de uma consulta existente.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.Link">
+            <summary>Link HATEOAS: relação, URL e método HTTP da ação disponível.</summary>
+        </member>
+        <member name="M:ClyvoVetApi.DTOs.Link.#ctor(System.String,System.String,System.String)">
+            <summary>Link HATEOAS: relação, URL e método HTTP da ação disponível.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.Resource`1">
+            <summary>Recurso acompanhado dos links das ações disponíveis para ele.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.PagedResponse`1">
+            <summary>Coleção paginada com metadados de paginação e links de navegação.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.LoginDto">
+            <summary>Credenciais para obtenção do token JWT.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.TokenResponse">
+            <summary>Token JWT emitido após autenticação.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.SendMessageDto">
+            <summary>Mensagem enviada no chat interno de uma consulta.</summary>
+        </member>
+        <member name="T:ClyvoVetApi.DTOs.ApiErrorResponse">
+            <summary>
+            Formato padronizado de erro retornado pelo middleware global de exceções.
+            O CorrelationId permite localizar, nos logs estruturados, exatamente a requisição
+            que originou o erro.
+            </summary>
+        </member>
+    </members>
+</doc>
